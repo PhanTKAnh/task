@@ -1,24 +1,10 @@
 import { Request, Response, Router } from "express";
-import Task from "../../../models/task.model";
 const router: Router = Router();
 
+import * as controller from "../controllers/task.controller";
 
-router.get("/",async (req:Request, res:Response) =>{
-    const tasks = await Task.find({
-        deleted:false
-    });
-    console.log(tasks);
 
-    res.json(tasks)
-});
+router.get("/",controller.index);
 
-router.get("/detail/:id",async (req:Request, res:Response) =>{
-    const id: string  = req.params.id;
-
-    const task = await Task.find({
-        _id:id,
-        deleted:false
-    });
-    res.json(task)
-});
+router.get("/detail/:id", controller.detail);
 export const taskRoutes: Router = router;
