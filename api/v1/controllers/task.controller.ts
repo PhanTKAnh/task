@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import Task from "../models/task.model";
 import paginationHelper from "../../../helpers/pagination";
+import searchHelper from "../../../helpers/search";
 
 export const index = async (req:Request, res:Response) =>{
     // FIND
     interface Find{
         deleted: boolean,
-        status?: string
+        status?: string, 
+        title?: RegExp
     }
     const find: Find ={
         deleted:false,
@@ -39,6 +41,13 @@ export const index = async (req:Request, res:Response) =>{
         countTask
     )
     // End Pagination
+
+    // search
+    const objectSearch = searchHelper(req.query);
+    if (req.query.keyword) {
+        find.title = objectSearch.regex;
+    }
+    // end search 
 
     const tasks = await Task.find(find)
     .sort(sort)
