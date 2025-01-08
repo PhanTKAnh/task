@@ -88,15 +88,16 @@ export const changeStatus= async (req:Request, res:Response) =>{
 
 export const changeMulti = async (req:Request, res:Response) => {
     try {
+        enum Key {
+            STATUS = "status",
+            DELETE = "delete"
+        }
         const ids: string[] = req.body.ids;
         const key: string = req.body.key;
         const value : string = req.body.value;
-        console.log(ids);
-        console.log(key);
-        console.log(value)
 
          switch (key) {
-            case "status":
+            case Key.STATUS:
                 await Task.updateMany({
                     _id: {$in: ids},
                 },{
@@ -107,7 +108,7 @@ export const changeMulti = async (req:Request, res:Response) => {
                     message:"Cập nhật trạng thái thành công! "
                 });
                 break;
-            case "deleted":
+            case Key.DELETE:
                 await Task.updateMany({
                     _id: {$in: ids},
                 },{
@@ -172,6 +173,31 @@ export const editPatch= async (req:Request, res:Response) => {
        res.json({
         code: 200,
         message:"Cập nhật thành công! ",
+    });
+    } catch (error) {
+        res.json({
+            code: 400,
+            message:"Lỗi! "
+        });
+    }
+   
+   
+};
+
+// [PATCH] /api/v1/tasks/delete/:id
+export const deleteTask = async (req, res) => {
+    try {
+        const id: string = req.params.id;
+
+        await Task.updateOne({_id:id},{
+            deleted: true,
+            deleteAt: new Date()
+        });
+
+
+       res.json({
+        code: 200,
+        message:"Xóa thành công! ",
     });
     } catch (error) {
         res.json({
